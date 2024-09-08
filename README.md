@@ -171,5 +171,4 @@ pipwin install pyaudio</code></pre></li>
 
 <ul>
     <li><b>GitHub</b>: <a href="https://github.com/huzaifa157" target="_blank">Huzaifa</a></li>
-    <li><b>Email</b>: <a href="mailto:huzaifa@example.com">huzaifa@example.com</a></li>
 </ul>
