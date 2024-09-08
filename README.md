@@ -165,3 +165,6 @@ pipwin install pyaudio</code></pre></li>
 <ul>
     <li><b>GitHub</b>: <a href="https://github.com/huzaifa157" target="_blank">Huzaifa</a></li>
 </ul>
+<ul>
+    <li><b>Linkedin</b>: <a href="https://www.linkedin.com/in/syedhuzaifa-codes/" target="_blank">Huzaifa</a></li>
+</ul>
