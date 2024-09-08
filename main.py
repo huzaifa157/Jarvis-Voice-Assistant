@@ -4,12 +4,18 @@ import pyttsx3
 import requests
 import pygetwindow as gw
 import time
+import os
+import logging
 
-newsapi = "207887fc2fa04668b315001b4786eb46"
+# Load API key from environment variable
+newsapi = os.getenv("NEWS_API_KEY", "207887fc2fa04668b315001b4786eb46")
 
 # Initialize recognizer and engine
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
 
 def speak(text):
     """Speak the given text using pyttsx3."""
@@ -20,7 +26,7 @@ def listen_for_audio():
     """Listen for audio and return the recognized text."""
     with sr.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source)
-        print("Listening....")
+        logging.info("Listening for command....")
         try:
             audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)
             return recognizer.recognize_google(audio).strip().lower()
@@ -32,7 +38,7 @@ def listen_for_audio():
             speak("There was an error with the speech recognition service.")
             return None   
         except Exception as e:
-            print(f"An unexpected error occurred: {e}")
+            logging.error(f"An unexpected error occurred: {e}")
             speak("An unexpected error occurred.")
             return None
     
@@ -44,9 +50,7 @@ def close_application(app_name):
         return
     
     for window in windows:
-        # Print all window titles to debug
-        print(f"Window found: {window.title}")
-        
+        logging.info(f"Window found: {window.title}")
         if app_name.lower() in window.title.lower():
             window.close()
             speak(f"Closed {app_name} successfully.")
@@ -54,63 +58,67 @@ def close_application(app_name):
 
     speak(f"Couldn't find any windows with the name '{app_name}'.")
 
+def open_website(url, site_name):
+    """Open a website in the default browser."""
+    speak(f"Opening {site_name}, Sir.")
+    webbrowser.open(url)
+
+def fetch_news():
+    """Fetch the latest news using the News API."""
+    speak("Please wait, fetching the latest news for you.")
+    try:
+        r = requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey={newsapi}")
+        if r.status_code == 200:
+            data = r.json()
+            articles = data.get('articles', [])
+            if articles:
+                for article in articles[:5]:
+                    speak(article['title'])
+            else:
+                speak("I couldn't find any news articles.")
+        else:
+            speak("Failed to fetch the news. Please try again later.")
+    except requests.RequestException as e:
+        speak("There was an error fetching the news.")
+        logging.error(f"Error fetching news: {e}")
+
 if __name__ == "__main__":
     speak("Hello Respectable Sir, welcome! I am Jarvis.")
     wake_words = ["hello jarvis", "hi jarvis", "jarvis", "hey jarvis", "hello", "hi", "hey"]
     
+    # Main loop to listen for wake words
     while True:
-        print("Listening for wake word....")  
+        logging.info("Listening for wake word....")  
         command = listen_for_audio()
         
         if command and any(wake_word in command for wake_word in wake_words):
             speak("Yes sir, I'm Jarvis. How can I help you today?")
             break
         elif command:
-            print(f"Unrecognized wake word: '{command}'")
+            logging.warning(f"Unrecognized wake word: '{command}'")
             speak(f"I didn't recognize the wake word '{command}'. Please try again.")
     
+    # Loop to listen for commands
     while True:
-        print("Listening for command....")
         command = listen_for_audio()
         
         if command:
-            print(f"Command received: '{command}'")
+            logging.info(f"Command received: '{command}'")
+            
             if "open google" in command:
-                speak("Opening Google, Sir.")
-                webbrowser.open("http://www.google.com")
+                open_website("http://www.google.com", "Google")
             elif "open facebook" in command:
-                speak("Opening Facebook, Sir.")
-                webbrowser.open("http://www.facebook.com")
+                open_website("http://www.facebook.com", "Facebook")
             elif "open youtube" in command:
-                speak("Opening YouTube, Sir.")
-                webbrowser.open("http://www.youtube.com")
+                open_website("http://www.youtube.com", "YouTube")
             elif "open linkedin" in command:
-                speak("Opening LinkedIn, Sir.")
-                webbrowser.open("http://www.linkedin.com")
+                open_website("http://www.linkedin.com", "LinkedIn")
             elif "play coldplay" in command:
-                speak("Playing Coldplay for you!")
-                webbrowser.open("https://youtu.be/YykjpeuMNEk?si=8tHA-JkFLoslF2Wv")
+                open_website("https://youtu.be/YykjpeuMNEk?si=8tHA-JkFLoslF2Wv", "Coldplay")
             elif "play on my way" in command:
-                speak("Playing 'On My Way' for you!")
-                webbrowser.open("https://youtu.be/dhYOPzcsbGM?si=PBZ7YEBClOyfoPLF")
+                open_website("https://youtu.be/dhYOPzcsbGM?si=PBZ7YEBClOyfoPLF", "On My Way")
             elif "news" in command:
-                speak("Please wait, fetching the latest news for you.")
-                try:
-                    r = requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey={newsapi}")
-                    if r.status_code == 200:
-                        data = r.json()
-                        print("Response Data:", data)
-                        articles = data.get('articles', [])
-                        if articles:
-                            for article in articles[:5]:
-                                speak(article['title'])
-                        else:
-                            speak("I couldn't find any news articles.")
-                    else:
-                        speak("Failed to fetch the news. Please try again later.")
-                except requests.RequestException as e:
-                    speak("There was an error fetching the news.")
-                    print(f"Error fetching news: {e}")
+                fetch_news()
             elif "close google" in command:
                 close_application("Google")
             elif "close facebook" in command:
@@ -124,7 +132,6 @@ if __name__ == "__main__":
                 break
             else:
                 speak(f"I didn't recognize the command '{command}'. Please try again.")
-                print(f"Unrecognized command: '{command}'")
+                logging.warning(f"Unrecognized command: '{command}'")
         else:
-            # Sleep briefly before checking for commands again
             time.sleep(1)
