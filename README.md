@@ -2,7 +2,7 @@
 
 <h3>A Voice-Controlled Personal Assistant</h3>
 
-<p>Jarvis is a voice-controlled assistant that listens to your commands and performs various tasks such as opening websites, playing music, fetching the latest news, and closing applications. This project demonstrates how speech recognition and text-to-speech technologies can be integrated with Python for a seamless, hands-free experience.</p>
+<p>Jarvis is an innovative voice-controlled assistant designed to simplify your digital tasks through seamless voice interaction. Inspired by the desire to create an intuitive personal assistant, Jarvis utilizes speech recognition and text-to-speech technologies to provide a hands-free experience. Whether you need to browse the web, listen to music, or stay updated with the latest news, Jarvis is here to help.</p>
 
 <hr>
 
@@ -109,11 +109,11 @@ cd Jarvis-Voice-Assistant</code></pre></li>
 <h2>Technologies Used</h2>
 <ul>
     <li><b>Python</b>: Core language for implementing logic and control.</li>
-    <li><b>SpeechRecognition</b>: For converting speech to text.</li>
-    <li><b>pyttsx3</b>: For text-to-speech conversion.</li>
+    <li><b><a href="https://pypi.org/project/SpeechRecognition/">SpeechRecognition</a></b>: For converting speech to text.</li>
+    <li><b><a href="https://pypi.org/project/pyttsx3/">pyttsx3</a></b>: For text-to-speech conversion.</li>
     <li><b>Webbrowser</b>: For automating browser actions.</li>
-    <li><b>PyGetWindow</b>: For window and application control.</li>
-    <li><b>NewsAPI</b>: To fetch the latest headlines from news sources.</li>
+    <li><b><a href="https://pypi.org/project/PyGetWindow/">PyGetWindow</a></b>: For window and application control.</li>
+    <li><b><a href="https://newsapi.org/">NewsAPI</a></b>: To fetch the latest headlines from news sources.</li>
     <li><b>Google Speech Recognition API</b>: For voice recognition.</li>
 </ul>
 
@@ -127,7 +127,7 @@ cd Jarvis-Voice-Assistant</code></pre></li>
     <pre><code>pip install pipwin
 pipwin install pyaudio</code></pre></li>
 
-    <li><b>Speech Recognition Not Working</b>: Check your microphone settings and ensure that Google Speech Recognition is accessible.</li>
+    <li><b>Speech Recognition Not Working</b>: Check your microphone settings and ensure that Google Speech Recognition is accessible. Also, verify that the application has permission to use the microphone.</li>
 
     <li><b>API Key Error</b>: If you're receiving errors while fetching news, double-check your API key and the NewsAPI configuration.</li>
 </ul>
@@ -157,6 +157,7 @@ pipwin install pyaudio</code></pre></li>
     <li>Open a Pull Request.</li>
 </ol>
 
+<hr>
 
 <h2>Contact</h2>
 
@@ -164,7 +165,5 @@ pipwin install pyaudio</code></pre></li>
 
 <ul>
     <li><b>GitHub</b>: <a href="https://github.com/huzaifa157" target="_blank">Huzaifa</a></li>
-</ul>
-<ul>
-    <li><b>Linkedin</b>: <a href="https://www.linkedin.com/in/syedhuzaifa-codes/" target="_blank">Huzaifa</a></li>
+    <li><b>LinkedIn</b>: <a href="https://www.linkedin.com/in/syedhuzaifa-codes/" target="_blank">Huzaifa</a></li>
 </ul>
