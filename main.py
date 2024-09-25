@@ -41,7 +41,7 @@ def listen_for_audio():
             logging.error(f"An unexpected error occurred: {e}")
             speak("An unexpected error occurred.")
             return None
-    
+
 def close_application(app_name):
     """Close an application by its name."""
     windows = gw.getWindowsWithTitle(app_name)
@@ -63,11 +63,11 @@ def open_website(url, site_name):
     speak(f"Opening {site_name}, Sir.")
     webbrowser.open(url)
 
-def fetch_news():
-    """Fetch the latest news using the News API."""
+def fetch_news(category="general"):
+    """Fetch the latest news using the News API, allowing for category-specific news."""
     speak("Please wait, fetching the latest news for you.")
     try:
-        r = requests.get(f"https://newsapi.org/v2/top-headlines?country=us&apiKey={newsapi}")
+        r = requests.get(f"https://newsapi.org/v2/top-headlines?country=us&category={category}&apiKey={newsapi}")
         if r.status_code == 200:
             data = r.json()
             articles = data.get('articles', [])
@@ -82,6 +82,51 @@ def fetch_news():
         speak("There was an error fetching the news.")
         logging.error(f"Error fetching news: {e}")
 
+def continuously_listen():
+    """Keep listening for commands without requiring wake words repeatedly."""
+    while True:
+        command = listen_for_audio()
+        if command:
+            logging.info(f"Command received: '{command}'")
+            if not process_command(command):
+                break
+        else:
+            time.sleep(1)
+
+def process_command(command):
+    """Process the given command."""
+    if "open google" in command:
+        open_website("http://www.google.com", "Google")
+    elif "open facebook" in command:
+        open_website("http://www.facebook.com", "Facebook")
+    elif "open youtube" in command:
+        open_website("http://www.youtube.com", "YouTube")
+    elif "open linkedin" in command:
+        open_website("http://www.linkedin.com", "LinkedIn")
+    elif "play coldplay" in command:
+        open_website("https://youtu.be/YykjpeuMNEk?si=8tHA-JkFLoslF2Wv", "Coldplay")
+    elif "play on my way" in command:
+        open_website("https://youtu.be/dhYOPzcsbGM?si=PBZ7YEBClOyfoPLF", "On My Way")
+    elif "news" in command:
+        speak("Which category of news would you like? For example: sports, technology, business.")
+        category = listen_for_audio() or "general"
+        fetch_news(category)
+    elif "close google" in command:
+        close_application("Google")
+    elif "close facebook" in command:
+        close_application("Facebook")
+    elif "close youtube" in command:
+        close_application("YouTube")
+    elif "close linkedin" in command:
+        close_application("LinkedIn")
+    elif "bye" in command or "exit" in command:
+        speak("Goodbye, Sir. Have a great day!")
+        return False
+    else:
+        speak(f"I didn't recognize the command '{command}'. Please try again.")
+        logging.warning(f"Unrecognized command: '{command}'")
+    return True
+
 if __name__ == "__main__":
     speak("Hello Respectable Sir, welcome! I am Jarvis.")
     wake_words = ["hello jarvis", "hi jarvis", "jarvis", "hey jarvis", "hello", "hi", "hey"]
@@ -93,45 +138,8 @@ if __name__ == "__main__":
         
         if command and any(wake_word in command for wake_word in wake_words):
             speak("Yes sir, I'm Jarvis. How can I help you today?")
+            continuously_listen()
             break
         elif command:
             logging.warning(f"Unrecognized wake word: '{command}'")
             speak(f"I didn't recognize the wake word '{command}'. Please try again.")
-    
-    # Loop to listen for commands
-    while True:
-        command = listen_for_audio()
-        
-        if command:
-            logging.info(f"Command received: '{command}'")
-            
-            if "open google" in command:
-                open_website("http://www.google.com", "Google")
-            elif "open facebook" in command:
-                open_website("http://www.facebook.com", "Facebook")
-            elif "open youtube" in command:
-                open_website("http://www.youtube.com", "YouTube")
-            elif "open linkedin" in command:
-                open_website("http://www.linkedin.com", "LinkedIn")
-            elif "play coldplay" in command:
-                open_website("https://youtu.be/YykjpeuMNEk?si=8tHA-JkFLoslF2Wv", "Coldplay")
-            elif "play on my way" in command:
-                open_website("https://youtu.be/dhYOPzcsbGM?si=PBZ7YEBClOyfoPLF", "On My Way")
-            elif "news" in command:
-                fetch_news()
-            elif "close google" in command:
-                close_application("Google")
-            elif "close facebook" in command:
-                close_application("Facebook")
-            elif "close youtube" in command:
-                close_application("YouTube")
-            elif "close linkedin" in command:
-                close_application("LinkedIn")
-            elif "bye" in command or "exit" in command:
-                speak("Goodbye, Sir. Have a great day!")
-                break
-            else:
-                speak(f"I didn't recognize the command '{command}'. Please try again.")
-                logging.warning(f"Unrecognized command: '{command}'")
-        else:
-            time.sleep(1)
